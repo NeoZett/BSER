@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Erik-Neo Östlund-Zetterberg
+// See the license in the accompanying LICENSE.md file at the github repository:
+// https://github.com/NeoZett/BSER
+
 #ifndef BSER_H
 #define BSER_H
 
