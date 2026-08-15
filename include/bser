@@ -1,0 +1,3 @@
+#ifndef BSER_HPP
+#include <bser.hpp>
+#endif /* BSER_HPP */
