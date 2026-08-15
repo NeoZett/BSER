@@ -6,7 +6,7 @@
 
 This project consists of a C standard and C++ standard, supporting both C++11 and C. Using records and schemas, you can build objects and catalogs. Through a catalog, you can specify different integral record identifiers with different fields. This lets different object types with different fields coincide through the same binary file. Each field can be of any size, with a macro defining the maximum size. To change the maximum binary field size you can explicitly define the macro called `BSER_MAX_FIELD_BYTES` either before you include the header or after you include the header at the top of the file.
 
-There are also other configurable macros that you can define as well as `BSER_MAX_FIELD_BYTES`:
+There are also other configurable macros that you can define:
 
 | Macro                        | Description                                                    | Default |
 |------------------------------|----------------------------------------------------------------|---------|
