@@ -41,7 +41,7 @@ After creating an instance of the `bser_reader` struct, you must initialize it u
 
 With a reader, you can read all of the records in the file using the `bser_reader_execute` function. This function will return a boolean value, that is true when successful and false otherwise. The `has_completed` field will become true if successful and you will not be able to read the object again using the same reader. The reader is only supposed to be used once.
 
-To access the results of the reader, you can access the `records` and `record_count` field for all of the records and an integral number for how many records that was read.
+To access the results of the reader, you can access the `records` and `record_count` fields for all of the records and an integral number for how many records that was read.
 
 The writer must be initialized using the `bser_writer_init` function. You can also deinitialize it using the `bser_writer_deinit`, close the file using `bser_writer_close`, and execute the writer using the `bser_writer_execute` function.
 
