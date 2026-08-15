@@ -11,7 +11,7 @@ There are also other configurable macros that you can define:
 | Macro                        | Description                                                    | Default |
 |------------------------------|----------------------------------------------------------------|---------|
 | `BSER_MAX_SCHEMAS`           | The maximum amount of schemas that there can be in one catalog | 32      |
-| `BSER_MAX_FIELD_NAME_LENGTH` | The maximum string length of the name of one field             | 32      |
+| `BSER_MAX_FIELD_NAME_LENGTH` | The maximum length of a string name representation of a field  | 32      |
 | `BSER_MAX_FIELDS`            | The maximum number of fields in one record                     | 32      |
 | `BSER_MAX_READ_BATCH`        | The maximum number of records read through one reader          | 64      |
 | `BSER_MAX_WRITE_BATCH`       | The maximum number of records written through one writer       | 64      |
