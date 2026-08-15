@@ -4,7 +4,7 @@
 
 ## Abstract
 
-This project consists of a C standard and C++ standard, supporting both C++11 and C. Using records and schemas, you can build objects and catalogs. Through a catalog, you can specify different record type identifiers with different fields. This lets different object types with different fields subside in the same binary file. Each field can be of any size, with a macro defining the maximum size. To change the maximum binary field size you can explicitly define the macro called `BSER_MAX_FIELD_BYTES` either before you include the header or after you include the header.
+This project consists of a C standard and C++ standard, supporting both C++11 and C. Using records and schemas, you can build objects and catalogs. Through a catalog, you can specify different integral record identifiers with different fields. This lets different object types with different fields coincide through the same binary file. Each field can be of any size, with a macro defining the maximum size. To change the maximum binary field size you can explicitly define the macro called `BSER_MAX_FIELD_BYTES` either before you include the header or after you include the header at the top of the file.
 
 There are also other configurable macros that you can define:
 
@@ -23,33 +23,33 @@ There are also other configurable macros that you can define:
 
 In the include directory, the [`bser.h`](include/bser.h) file implements all of the C features. There are type definitions for a byte, record identifier, and numerical size. There are also binary packing, through the macros `BSER_PACK` and `BSER_UNPACK`.
 
-Using a C file object, you can read and write bytes, records, identifiers, and field sizes directly to the file. Using the `bser_record` struct, you can define a record with an identifier, field names, field count, and field values. You must initialize the record first using the `bser_record_init` function.
+Using a C file object in different bser functions, you can read and write bytes, records, identifiers, and field sizes directly to the file. Using the `bser_record` struct, you can define a record with an identifier, field names, field count, and field values. You must initialize the record first using the `bser_record_init` function.
 
-After you have initialized the record, you can set fields using their field indices or names. This can be done through the `bser_record_set_field_at` and `bser_record_set_field` functions, accompanied with their complimenting functions, for getting the value of a field, through the `bser_record_get_field_at` and `bser_record_get_field` functions.
+After you have initialized the record, you can set field values using their field index or name. This can be done through the `bser_record_set_field_at` or `bser_record_set_field` functions, accompanied with their complimenting functions—for getting the value of a field—through the `bser_record_get_field_at` and `bser_record_get_field` functions.
 
 ### Input/output structs
 
-There is a `bser_stream` struct, assessing which file you are modifying, common file operations, and the C file object itself. Once you create a `bser_stream` struct, you must initialize it using the `bser_stream_open` function, that returns true upon success and false otherwise. Then to close the stream, you can similarly call the `bser_stream_close` function.
+There is a `bser_stream` struct, assessing which file you are modifying, common file operations, and the C file object itself. Once you create a `bser_stream` struct, you must initialize it using the `bser_stream_open` function, that returns true upon success and false otherwise. Then, to close the stream, you can call the `bser_stream_close` function.
 
 The `bser_stream` struct is essentially the bser version of a file object or input/output file-stream. It is used during both reading and writing using the following two structs: `bser_reader` and `bser_writer`.
 
-To use the `bser_reader`, you have to specify which objects a file can consist of and, in doing so, which fields should be associated with which field name. The field names must be in the exact same order to preserve the field index, that is required for loading and saving to files. The upside is that you don't have to supply the records with a value.
+To use the `bser_reader` struct, you have to specify which objects a file can consist of and which fields should be associated with which field name. The field names must be in the exact same order to preserve the field index that is required for loading and saving to files. You don't have to supply the records with a value since the records themselves use indexes to bind field names with their corresponding values.
 
-To create a reader, you must first construct a catalog. In the catalog, there will be record-schemes for the data that you want and how you want to structure it. The catalog is a struct called `bser_catalog`, which you must fill its `schemas` field with schemas and preserve the `schema_count` field with how many schemas there are in the catalog in total after supplying or modifying the `schemas` field.
+To create a reader, you must first construct a catalog. In the catalog, there will be record-schemes that tell your reader what data you want and how you want to structure it. The catalog is a struct called `bser_catalog`, in which you must fill the `schemas` field with schemas and preserve the `schema_count` field with how many schemas there are in the catalog in total.
 
-After creating a reader struct, you must initialize it using the `bser_reader_init` function which will take the catalog to use for reading the records in a `path` wide character string pointer parameter. When you are done with the reader, you must call the `bser_reader_close` to close the file and `bser_reader_deinit` to deinitialize it.
+After creating an instance of the `bser_reader` struct, you must initialize it using the `bser_reader_init` function which will take a catalog for reading the records in a `path` wide character pointer parameter. When you are done with the reader, you must call the `bser_reader_close` to close the file or `bser_reader_deinit` to deinitialize it.
 
-With a reader, you can read all of the records in the file using the `bser_reader_execute` function. This function will return a boolean value, that is true when successful and false otherwise. The `has_completed` field will turn true if successful and you will not be able to read the object again using the same reader. This is to prevent corruption.
+With a reader, you can read all of the records in the file using the `bser_reader_execute` function. This function will return a boolean value, that is true when successful and false otherwise. The `has_completed` field will become true if successful and you will not be able to read the object again using the same reader. The reader is only supposed to be used once.
 
-To access the results of the reader, you can access the `records` field and `record_count` field for all of the records and an integral number for how many records that was read.
+To access the results of the reader, you can access the `records` and `record_count` field for all of the records and an integral number for how many records that was read.
 
-Using the writer is fairly similar. You must initialize the writer using the `bser_writer_init` function, deinitialize it using the `bser_writer_deinit` function, close the file using `bser_writer_close` function, and execute the writer using the `bser_writer_execute` function.
+The writer must be initialized using the `bser_writer_init` function. You can also deinitialize it using the `bser_writer_deinit`, close the file using `bser_writer_close`, and execute the writer using the `bser_writer_execute` function.
 
 ## The C++ version
 
-The C++ version is a wrapper over the C version, reducing code frequency and exposure. There are the exact same C++ classes that wrap the C structs in the C++ bser namespace. Initialization and deinitialization are handled automatically through the constructor and deconstructor of every object. For specialized behaviour, you can also use the `BSER_STRUCT` macro function to facilitate the struct serialization and deserialization.
+The C++ version is a wrapper over the C version primitives, reducing code boilerplate and exposure. Every C struct has a C++ corespondance in the C++ `bser` namespace. Initialization and deinitialization are handled automatically through the constructor and deconstructor of each object. For specialized behaviour, you can also use the `BSER_STRUCT` macro function to facilitate the struct serialization and deserialization.
 
-After calling the `BSER_STRUCT` with the struct and specifying every field you want to facilitate, there will be a static `to_record` and `from_record` function on the `bser::StructTraits` object supplied with the template type name of the struct. The first parameter to the `to_record` function will be the numerical identifier of the record, and the second parameter will be an instance of the struct itself. In the `from_record` function, you can supply the record object itself for the struct instance.
+After calling the `BSER_STRUCT` with a struct and specifying every field you want to facilitate, there will be a static `to_record` and `from_record` function on the `bser::StructTraits<Type>` template class. The first parameter of the `to_record` function will be the numerical identifier of the record, and the second parameter will be an instance of the struct itself. In the `from_record` function, you can supply the record object itself for the struct instance.
 
 ## License
 
