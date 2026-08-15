@@ -17,6 +17,8 @@ There are also other configurable macros that you can define:
 | `BSER_MAX_WRITE_BATCH`       | The maximum number of records written through one writer       | 64      |
 | `BSER_MAX_FIELD_BYTES`       | The maximum number of bytes the value of a field can have      | 128     |
 
+It is important to note that the the endianness may be differently structured because the program uses `memcpy` of native integer types (no sxplicit byte-order conversion). That means the file stores integers in the host machine's endiannes (almost always little-endian on x86). If you move the file between different-endian machines you must handle byte-ordering. Every field will consist of the same amount of bytes as the value of the `BSER_MAX_FIELD_BYTES` macro.
+
 ## The C version
 
 ### The C-header file
