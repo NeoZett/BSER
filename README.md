@@ -47,7 +47,7 @@ The writer must be initialized using the `bser_writer_init` function. You can al
 
 ## The C++ version
 
-The C++ version is a wrapper over the C version primitives, reducing code boilerplate and exposure. Every C struct has a C++ correspondence in the C++ `bser` namespace. Initialization and deinitialization are handled automatically through the constructor and deconstructor of each object. For specialized behaviour, you can also use the `BSER_STRUCT` macro function to facilitate the struct serialization and deserialization.
+The C++ version is a wrapper over the C version primitives, reducing code boilerplate and exposure. Every C struct has a C++ correspondence in the C++ `bser` namespace. Initialization and deinitialization are handled automatically through the constructor and deconstructor of each object. For specialized behavior, you can also use the `BSER_STRUCT` macro function to facilitate the struct serialization and deserialization.
 
 After calling the `BSER_STRUCT` with a struct and specifying every field you want to facilitate, there will be a static `to_record` and `from_record` function on the `bser::StructTraits<Type>` template class. The first parameter of the `to_record` function will be the numerical identifier of the record, and the second parameter will be an instance of the struct itself. In the `from_record` function, you can supply the record object itself for the struct instance.
 
