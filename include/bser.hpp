@@ -154,6 +154,11 @@ namespace bser
             return m_handle.field_count;
         }
 
+        BSER_NODISCARD IdType id() const BSER_NOEXCEPT
+        {
+            return m_handle.id;
+        }
+
         BSER_NODISCARD const bser_record_t* native_handle() const BSER_NOEXCEPT
         {
             return &m_handle;
