@@ -2,6 +2,16 @@
 
 *Save C or C++ objects in binary files, in which languages you can also load the same objects using the same binary files.*
 
+| Trait | Rank | Reasoning |
+|-------|------|-----------|
+| **speed** | 🥇 | Top 1-2% (only Cap'n Proto faster) |
+| **Predictability** | 🥇 | Absolute best in class |
+| **Ease of Use** | 🥈 | Only JSON simpler (universal support) |
+| **File Size** | 🥉 | 80% of protobuf (but 2-3x vs JSON) |
+| **Safety** | 🥈 | Good, with fixed struct guarantees |
+| **Flexibility** | 🥉 | Limited (no nested structures) |
+    Remeber that the above scores are only assessments by myself.
+
 ## Abstract
 
 This project consists of a C and C++ standard, supporting both C++11 and C. In this library, you can use records and schemas to build objects and catalogs. Through a catalog, you can specify different integral record identifiers with different fields, composed into schemas/records.
