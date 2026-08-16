@@ -507,6 +507,26 @@ namespace bser
         std::vector<Record> m_records;
     };
 
+    template <int size>
+    struct SerializableString {
+        char data[size]{};
+
+        SerializableString() = default;
+
+        SerializableString(const char* src) {
+            strncpy_s(data, src, sizeof(data));
+            data[sizeof(data) - 1] = '\0';
+        }
+
+        SerializableString& operator=(const char* src) {
+            strncpy_s(data, src, sizeof(data));
+            data[sizeof(data) - 1] = '\0';
+            return *this;
+        }
+
+        operator const char* () const { return data; }
+    };
+
     namespace detail
     {
         inline std::string clean_field_name(const std::string& name)
