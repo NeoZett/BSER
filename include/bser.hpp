@@ -311,6 +311,22 @@ namespace bser
             }
         }
 
+        BinaryWriter(const wchar_t* path, std::vector<Record> records) : m_handle{}
+        {
+            std::vector<bser_record_t> native_records;
+            native_records.reserve(records.size());
+
+            for (const auto& rec : records)
+            {
+                native_records.push_back(*rec.native_handle());
+            }
+
+            if (!bser_writer_init(&m_handle, path, native_records.data(), native_records.size()))
+            {
+                throw std::runtime_error("Failed to initialize binary writer");
+            }
+        }
+
         ~BinaryWriter()
         {
             bser_writer_deinit(&m_handle);
