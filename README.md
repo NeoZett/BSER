@@ -10,7 +10,7 @@
 | **File Size** | 🥉 | 80% of protobuf (but 2-3x vs JSON) |
 | **Safety** | 🥈 | Good, with fixed struct guarantees |
 | **Flexibility** | 🥉 | Limited (no nested structures) |
-    Remember that the above scores are only assessments by myself.
+    Remember that the above scores are only assessments made by myself.
 
 ## Abstract
 
