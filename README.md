@@ -1,4 +1,4 @@
-# BSER project
+# BSER: Binary Serialization for C and C++11
 
 *Save C or C++ objects in binary files, in which languages you can also load the same objects using the same binary files.*
 
