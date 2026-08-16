@@ -4,7 +4,9 @@
 
 ## Abstract
 
-This project consists of a C standard and C++ standard, supporting both C++11 and C. Using records and schemas, you can build objects and catalogs. Through a catalog, you can specify different integral record identifiers with different fields. This lets different object types with different fields coincide through the same binary file. Each field can be of any size, with a macro defining the maximum size. To change the maximum binary field size you can explicitly define the macro called `BSER_MAX_FIELD_BYTES` either before you include the header or after you include the header at the top of the file.
+This project consists of a C and C++ standard, supporting both C++11 and C. In this library, you can use records and schemas to build objects and catalogs. Through a catalog, you can specify different integral record identifiers with different fields, composed into schemas/records.
+
+This lets different object types with different fields and field sizes coincide through the same binary file. There is a macro defining the maximum size a field can take. To change the maximum binary field size you can explicitly define the macro called `BSER_MAX_FIELD_BYTES` either before you include the header or after you include the header at the top of the file or through your compilation method.
 
 There are also other configurable macros that you can define:
 
@@ -17,7 +19,9 @@ There are also other configurable macros that you can define:
 | `BSER_MAX_WRITE_BATCH`       | The maximum number of records written through one writer       | 64      |
 | `BSER_MAX_FIELD_BYTES`       | The maximum number of bytes the value of a field can have      | 128     |
 
-It is important to note that the the endianness may be differently structured because the program uses `memcpy` of native integer types (no explicit byte-order conversion). That means the file stores integers in the host machine's endiannes (almost always little-endian on x86). If you move the file between different-endian machines you must handle byte-ordering. Every field will consist of the same amount of bytes as the value of the `BSER_MAX_FIELD_BYTES` macro.
+It is important to note that the the endianness may be differently structured because the program uses `memcpy` of native integer types (no explicit byte-order conversion). That means the file stores integers in the host machine's endiannes (almost always little-endian on x86). If you move the file between different-endian machines you must handle byte-ordering.
+
+Every field will consist of the same amount of bytes as the value of the `BSER_MAX_FIELD_BYTES` macro.
 
 ## Details
 
