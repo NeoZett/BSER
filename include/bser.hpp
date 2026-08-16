@@ -25,6 +25,7 @@
 #include <cctype>
 #include <type_traits>
 #include <array>
+#include <memory>
 #include <bser.h>
 
 #ifndef BSER_NOEXCEPT
@@ -167,16 +168,41 @@ namespace bser
     class SchemaCatalog
     {
     public:
+        SchemaCatalog() BSER_NOEXCEPT : m_handle{} {}
+
         SchemaCatalog(std::initializer_list<Schema> schemas) : m_handle{}
         {
             for (const auto& sch : schemas)
             {
-                if (m_handle.schema_count >= BSER_MAX_SCHEMAS)
-                {
-                    throw std::runtime_error("Catalog capacity exceeded maximum schemas limit");
-                }
-                m_handle.schemas[m_handle.schema_count++] = *(sch.native_handle());
+                add(sch);
             }
+        }
+
+        explicit SchemaCatalog(const std::vector<Schema>& schemas) : m_handle{}
+        {
+            for (const auto& sch : schemas)
+            {
+                add(sch);
+            }
+        }
+
+        void add(const Schema& schema)
+        {
+            if (m_handle.schema_count >= BSER_MAX_SCHEMAS)
+            {
+                throw std::runtime_error("Catalog capacity exceeded maximum schemas limit");
+            }
+            m_handle.schemas[m_handle.schema_count++] = *(schema.native_handle());
+        }
+
+        BSER_NODISCARD size_t size() const BSER_NOEXCEPT
+        {
+            return static_cast<size_t>(m_handle.schema_count);
+        }
+
+        BSER_NODISCARD bool empty() const BSER_NOEXCEPT
+        {
+            return m_handle.schema_count == 0;
         }
 
         BSER_NODISCARD const bser_catalog_t* native_handle() const BSER_NOEXCEPT
@@ -244,13 +270,37 @@ namespace bser
     public:
         BinaryReader(const wchar_t* path, const SchemaCatalog& catalog) : m_handle{}
         {
-            if (!bser_reader_init(&m_handle, path, catalog.native_handle()))
+            if (!path || !bser_reader_init(&m_handle, path, catalog.native_handle()))
             {
                 throw std::runtime_error("Failed to initialize binary reader");
             }
         }
 
-        ~BinaryReader()
+        BinaryReader(const std::wstring& path, const SchemaCatalog& catalog)
+            : BinaryReader(path.c_str(), catalog)
+        {
+        }
+
+        BinaryReader(const BinaryReader&) = delete;
+        BinaryReader& operator=(const BinaryReader&) = delete;
+
+        BinaryReader(BinaryReader&& other) BSER_NOEXCEPT : m_handle(other.m_handle)
+        {
+            std::memset(&other.m_handle, 0, sizeof(bser_reader_t));
+        }
+
+        BinaryReader& operator=(BinaryReader&& other) BSER_NOEXCEPT
+        {
+            if (this != &other)
+            {
+                bser_reader_deinit(&m_handle);
+                m_handle = other.m_handle;
+                std::memset(&other.m_handle, 0, sizeof(bser_reader_t));
+            }
+            return *this;
+        }
+
+        ~BinaryReader() BSER_NOEXCEPT
         {
             bser_reader_deinit(&m_handle);
         }
@@ -295,39 +345,46 @@ namespace bser
     class BinaryWriter
     {
     public:
-        BinaryWriter(const wchar_t* path, std::initializer_list<Record> records) : m_handle{}
+        BinaryWriter(const wchar_t* path, const std::vector<Record>& records) : m_handle{}
         {
-            std::vector<bser_record_t> native_records;
-            native_records.reserve(records.size());
-
-            for (const auto& rec : records)
-            {
-                native_records.push_back(*rec.native_handle());
-            }
-
-            if (!bser_writer_init(&m_handle, path, native_records.data(), native_records.size()))
-            {
-                throw std::runtime_error("Failed to initialize binary writer");
-            }
+            init(path, records);
         }
 
-        BinaryWriter(const wchar_t* path, std::vector<Record> records) : m_handle{}
+        BinaryWriter(const std::wstring& path, const std::vector<Record>& records) : m_handle{}
         {
-            std::vector<bser_record_t> native_records;
-            native_records.reserve(records.size());
-
-            for (const auto& rec : records)
-            {
-                native_records.push_back(*rec.native_handle());
-            }
-
-            if (!bser_writer_init(&m_handle, path, native_records.data(), native_records.size()))
-            {
-                throw std::runtime_error("Failed to initialize binary writer");
-            }
+            init(path.c_str(), records);
         }
 
-        ~BinaryWriter()
+        BinaryWriter(const wchar_t* path, std::initializer_list<Record> records)
+            : BinaryWriter(path, std::vector<Record>(records))
+        {
+        }
+
+        BinaryWriter(const std::wstring& path, std::initializer_list<Record> records)
+            : BinaryWriter(path.c_str(), std::vector<Record>(records))
+        {
+        }
+
+        BinaryWriter(const BinaryWriter&) = delete;
+        BinaryWriter& operator=(const BinaryWriter&) = delete;
+
+        BinaryWriter(BinaryWriter&& other) BSER_NOEXCEPT : m_handle(other.m_handle)
+        {
+            std::memset(&other.m_handle, 0, sizeof(bser_writer_t));
+        }
+
+        BinaryWriter& operator=(BinaryWriter&& other) BSER_NOEXCEPT
+        {
+            if (this != &other)
+            {
+                bser_writer_deinit(&m_handle);
+                m_handle = other.m_handle;
+                std::memset(&other.m_handle, 0, sizeof(bser_writer_t));
+            }
+            return *this;
+        }
+
+        ~BinaryWriter() BSER_NOEXCEPT
         {
             bser_writer_deinit(&m_handle);
         }
@@ -353,7 +410,101 @@ namespace bser
         }
 
     private:
+        void init(const wchar_t* path, const std::vector<Record>& records)
+        {
+            if (!path)
+            {
+                throw std::invalid_argument("File path cannot be null");
+            }
+
+            std::vector<bser_record_t> native_records;
+            native_records.reserve(records.size());
+
+            for (const auto& rec : records)
+            {
+                native_records.push_back(*rec.native_handle());
+            }
+
+            if (!bser_writer_init(&m_handle, path, native_records.data(), native_records.size()))
+            {
+                throw std::runtime_error("Failed to initialize binary writer");
+            }
+        }
+
         bser_writer_t m_handle;
+    };
+
+    class BinaryStream
+    {
+    public:
+        explicit BinaryStream(std::wstring path)
+            : m_path(std::move(path))
+        {
+        }
+
+        explicit BinaryStream(const wchar_t* path)
+            : m_path(path ? path : L"")
+        {
+        }
+
+        void push_back(const Record& record)
+        {
+            m_records.push_back(record);
+        }
+
+        void push_back(Record&& record)
+        {
+            m_records.push_back(std::move(record));
+        }
+
+        void clear() BSER_NOEXCEPT
+        {
+            m_records.clear();
+        }
+
+        bool read(const SchemaCatalog& catalog)
+        {
+            BinaryReader reader(m_path.c_str(), catalog);
+
+            if (!reader.execute())
+            {
+                throw std::runtime_error("An error occurred when reading binary stream");
+            }
+
+            m_records = reader.records();
+            return reader.has_completed();
+        }
+
+        bool write()
+        {
+            BinaryWriter writer(m_path.c_str(), m_records);
+
+            if (!writer.execute())
+            {
+                throw std::runtime_error("An error occurred when writing binary stream");
+            }
+
+            return writer.has_completed();
+        }
+
+        BSER_NODISCARD const std::vector<Record>& records() const BSER_NOEXCEPT
+        {
+            return m_records;
+        }
+
+        BSER_NODISCARD std::vector<Record>& records() BSER_NOEXCEPT
+        {
+            return m_records;
+        }
+
+        BSER_NODISCARD const std::wstring& path() const BSER_NOEXCEPT
+        {
+            return m_path;
+        }
+
+    private:
+        std::wstring m_path;
+        std::vector<Record> m_records;
     };
 
     namespace detail
