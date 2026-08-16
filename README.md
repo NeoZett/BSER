@@ -125,7 +125,7 @@ The writer must be initialized using the `bser_writer_init` function. You can al
 
 ## The C++ version
 
-The C++ version is a wrapper over the C version primitives, reducing code boilerplate and exposure. Every C struct has a C++ correspondence in the C++ `bser` namespace. We must highlight here that the minimum version that this RAII convenience layer can support for the small C library is at C++11.
+The C++ version is a wrapper over the C version primitives, reducing code boilerplate and exposure. Every C struct has a C++ correspondence in the C++ `bser` namespace. We must highlight here that the minimum version that this RAII convenience layer can support for the small C library is at C++11. It is implemented in the [`bser.hpp`](include/bser.hpp) file under the include directory.
 
 Initialization and deinitialization are handled automatically through the constructor and deconstructor of each object. For specialized behavior, you can also use the `BSER_STRUCT` macro function to facilitate the struct serialization and deserialization.
 
