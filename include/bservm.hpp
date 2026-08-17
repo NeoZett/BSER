@@ -2,11 +2,11 @@
 #define BSER_VM_HPP
 
 #ifndef BSER_MAX_FIELD_BYTES
-#define BSER_MAX_FIELD_BYTES 175
+#define BSER_MAX_FIELD_BYTES 108
 #endif
 
 #ifndef BSER_MAX_STRING_SIZE
-#define BSER_MAX_STRING_SIZE BSER_MAX_FIELD_BYTES
+#define BSER_MAX_STRING_SIZE 100
 #endif
 
 #include <bser>
@@ -22,7 +22,7 @@
 
 namespace bservm
 {
-	static_assert(BSER_MAX_FIELD_BYTES >= 150,
+	static_assert(BSER_MAX_FIELD_BYTES >= (BSER_MAX_STRING_SIZE + 8 >= 96) ? BSER_MAX_STRING_SIZE + 8 : 96,
 		"BSER_MAX_FIELD_BYTES is too small for bservm");
 
 	enum : bser_id_t
@@ -80,6 +80,8 @@ namespace bservm
 		VarId var_id{ 0 };
 		BserString literal{};
 	};
+
+	static_assert(sizeof(OperandPayload) <= BSER_MAX_FIELD_BYTES, "OperandPayload too large for BserBytes");
 
 	struct Instruction
 	{
