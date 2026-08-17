@@ -2,11 +2,11 @@
 #define BSER_VM_HPP
 
 #ifndef BSER_MAX_FIELD_BYTES
-#define BSER_MAX_FIELD_BYTES 150
+#define BSER_MAX_FIELD_BYTES 175
 #endif
 
 #ifndef BSER_MAX_STRING_SIZE
-#define BSER_MAX_STRING_SIZE 150
+#define BSER_MAX_STRING_SIZE BSER_MAX_FIELD_BYTES
 #endif
 
 #include <bser>
