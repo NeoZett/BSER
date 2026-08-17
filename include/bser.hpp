@@ -532,6 +532,47 @@ namespace bser
         operator const char* () const { return data; }
     };
 
+    template <int size>
+    struct SerializableBytes {
+        bser_byte_t data[size]{};
+
+        SerializableBytes() = default;
+
+        SerializableBytes(const bser_byte_t* src) {
+            if (src) {
+                std::memcpy(data, src, size);
+            }
+        }
+
+        SerializableBytes& operator=(const bser_byte_t* src) {
+            if (src) {
+                std::memcpy(data, src, size);
+            }
+            return *this;
+        }
+
+        template <typename T>
+        static SerializableBytes<size> pack(const T& value) {
+            static_assert(std::is_trivially_copyable<T>::value, "T must be trivially copyable");
+            static_assert(sizeof(T) <= size, "T does not fit in SerializableBytes");
+            SerializableBytes<size> bytes;
+            std::memcpy(bytes.data, &value, sizeof(T));
+            return bytes;
+        }
+
+        template <typename T>
+        T unpack() const {
+            static_assert(std::is_trivially_copyable<T>::value, "T must be trivially copyable");
+            static_assert(sizeof(T) <= size, "T does not fit in SerializableBytes");
+            T value{};
+            std::memcpy(&value, data, sizeof(T));
+            return value;
+        }
+
+        operator const bser_byte_t* () const { return data; }
+        operator bser_byte_t* () { return data; }
+    };
+
     namespace detail
     {
         inline std::string clean_field_name(const std::string& name)
