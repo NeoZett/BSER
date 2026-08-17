@@ -2,7 +2,11 @@
 #define BSER_VM_HPP
 
 #ifndef BSER_MAX_FIELD_BYTES
-#define BSER_MAX_FIELD_BYTES 100
+#define BSER_MAX_FIELD_BYTES 150
+#endif
+
+#ifndef BSER_MAX_STRING_SIZE
+#define BSER_MAX_STRING_SIZE 150
 #endif
 
 #include <bser>
@@ -18,7 +22,7 @@
 
 namespace bservm
 {
-	static_assert(BSER_MAX_FIELD_BYTES >= 100,
+	static_assert(BSER_MAX_FIELD_BYTES >= 150,
 		"BSER_MAX_FIELD_BYTES is too small for bservm");
 
 	enum : bser_id_t
@@ -61,8 +65,8 @@ namespace bservm
 		Halt = 50
 	};
 
-	using BserString = bser::SerializableString<64>;
-	using BserBytes = bser::SerializableBytes<96>;
+	using BserString = bser::SerializableString<BSER_MAX_STRING_SIZE>;
+	using BserBytes = bser::SerializableBytes<BSER_MAX_FIELD_BYTES>;
 	using VarId = bser_id_t;
 	using LabelId = bser_id_t;
 

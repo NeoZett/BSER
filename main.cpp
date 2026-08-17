@@ -1,50 +1,30 @@
-// Example program
+// New example program
 
+#include <bservm.hpp>
 #include <iostream>
-#include <bser>
-
-struct Coordinate
-{
-	int x;
-	int y;
-};
-
-BSER_STRUCT(Coordinate, obj.x, obj.y)
-
-enum SchemaID : bser_id_t {
-	ID_COORDINATE = 101
-};
 
 int main()
 {
-	const wchar_t* output_file = L"test.bser";
+    bservm::Program program;
+    program
+        .print("This library uses the BSER serializer, made by Neo Zetterberg\n")
+        .print("to serialize and deserialize programs that can be run using\n")
+        .print("the C++ virtual machine. The BSER virtual machine can be used\n")
+        .print("to create and run programs in C++.\n\n")
+        .print("Ever since version 1.0.3 the new virtual machine requires C++17\n")
+        .print("or higher. The primary part of this library is the serializer,\n")
+        .print("and therefore we don't prioritise the virtual machine. It is more\n")
+        .print("of an extension and optional tool made for those who wants to\n")
+        .print("explore the possibilities of this BSER library.\n\n")
+        .print("Please contribute to us here: https://github.com/NeoZett/BSER\n")
+        .print("Thank you for your contributions and your time!\n\n");
 
-	bser::Record recordA = bser::StructTraits<Coordinate>::to_record(ID_COORDINATE, { 10, 57 });
+    program.write(L"info.bser");
 
-	bser::BinaryWriter writer(output_file, { recordA });
+    bservm::VirtualMachine vm;
 
-	if (!writer.execute())
-	{
-		throw std::runtime_error("Couldn't write to file");
-	}
-	
-	bser::SchemaCatalog catalog(
-		{
-			bser::StructTraits<Coordinate>::to_record(ID_COORDINATE, { })
-		});
-	bser::BinaryReader reader(output_file, catalog);
+    vm.load(L"info.bser");
+    vm.execute();
 
-	if (!reader.execute())
-	{
-		throw std::runtime_error("Couldn't read from file");
-	}
-
-	auto records = reader.records();
-
-	for (bser::Record& record : records)
-	{
-		std::cout << "X: " << record.get<int>("x") << ", Y: " << record.get<int>("y");
-	}
-
-	return 0;
+    return 0;
 }
