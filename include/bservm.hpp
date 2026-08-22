@@ -344,6 +344,11 @@ namespace bservm
 			return *this;
 		}
 
+		Program& add_instruction(Instruction& instruction)
+		{
+			m_instructions.push_back(std::move(instruction));
+		}
+
 		BSER_NODISCARD const std::vector<Instruction>& instructions() const BSER_NOEXCEPT
 		{
 			return m_instructions;

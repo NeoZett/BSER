@@ -529,7 +529,9 @@ namespace bser
             return *this;
         }
 
-        operator const char* () const { return data; }
+        BSER_NODISCARD const char* c_str() const BSER_NOEXCEPT { return data; }
+
+        operator const char* () const BSER_NOEXCEPT { return data; }
     };
 
     template <int size>
@@ -569,8 +571,8 @@ namespace bser
             return value;
         }
 
-        operator const bser_byte_t* () const { return data; }
-        operator bser_byte_t* () { return data; }
+        operator const bser_byte_t* () const BSER_NOEXCEPT { return data; }
+        operator bser_byte_t* () BSER_NOEXCEPT { return data; }
     };
 
     namespace detail
