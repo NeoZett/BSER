@@ -22,7 +22,7 @@
 
 namespace bservm
 {
-	static_assert(BSER_MAX_FIELD_BYTES >= (BSER_MAX_STRING_SIZE + 8 >= 96) ? BSER_MAX_STRING_SIZE + 8 : 96,
+	static_assert(BSER_MAX_FIELD_BYTES >= ((BSER_MAX_STRING_SIZE + 8 >= 96) ? BSER_MAX_STRING_SIZE + 8 : 96),
 		"BSER_MAX_FIELD_BYTES is too small for bservm");
 
 	enum : bser_id_t
